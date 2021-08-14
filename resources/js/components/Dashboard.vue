@@ -38,7 +38,6 @@
 
 <script>
 import BarChart from './expense/ExpenseChart.vue'
-import {getRelativePosition} from 'chart.js/helpers';
 
 export default {
   components: {

@@ -1,12 +1,23 @@
 <template>
-  <canvas id="myChart"></canvas>
+  <div class="vld-parent">
+    <loading :active.sync="isLoading"
+             :can-cancel="false"
+             :is-full-page="false"></loading>
+
+    <canvas id="myChart"></canvas>
+  </div>
 </template>
 
 <script>
 import Chart from 'chart.js/auto';
 import {getRelativePosition} from 'chart.js/helpers';
 
+import Loading from 'vue-loading-overlay';
+
 export default {
+  components: {
+    Loading
+  },
   name: 'BarChart',
 
   data: () => ({
@@ -28,11 +39,13 @@ export default {
       'rgba(255, 159, 64, 1)',
       'rgba(67, 20, 108, 1)'
     ],
-    loaded: false,
     chartData: [],
-    labels: []
+    labels: [],
+
+    isLoading: false,
   }),
   async mounted() {
+    this.isLoading = true;
     try {
       axios.get('/api/category/chartList').then(({data}) => {
         const resp = data.data
@@ -41,7 +54,6 @@ export default {
           this.chartData.push(category.total)
         })
 
-        console.log(JSON.parse(JSON.stringify(this.chartData)))
         const ctx = 'myChart';
         const chart = new Chart(ctx, {
           type: 'bar',
@@ -74,10 +86,12 @@ export default {
             }
           }
         })
+        this.isLoading = false;
 
       });
 
     } catch (e) {
+      this.isLoading = false;
       console.error(e)
     }
   }
